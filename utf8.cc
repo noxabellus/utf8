@@ -1,9 +1,9 @@
 #include "utf8.hh"
 
 extern "C" {
-  int32_t  utf8proc_toupper (int32_t c);
-  int32_t  utf8proc_tolower (int32_t c);
-  int utf8proc_charwidth (int32_t c);
+  uint32_t  utf8proc_toupper (uint32_t c);
+  uint32_t  utf8proc_tolower (uint32_t c);
+  int utf8proc_charwidth (uint32_t c);
   uint8_t* utf8proc_NFKC_Casefold (uint8_t const* str);
 }
 
@@ -92,8 +92,8 @@ namespace utf8 {
   }
 
   extern
-  size_t encode (int32_t c, uint8_t* bytes) {
-    size_t length = char_size(c);
+  size_t encode (uint32_t c, uint8_t* bytes) {
+    uint8_t length = char_size(c);
 
     if (length == 1) {
       bytes[0] = c;
@@ -116,14 +116,14 @@ namespace utf8 {
 
   extern
   size_t put_char (uint8_t const* ustr, FILE* f) {
-    size_t adv = char_size(ustr);
+    uint8_t adv = char_size(ustr);
     fwrite(ustr, adv, 1, f);
     return adv;
   }
 
   extern
-  size_t put_char (int32_t c, FILE* f) {
-    int32_t mem = 0;
+  size_t put_char (uint32_t c, FILE* f) {
+    uint32_t mem = 0;
     encode(c, (uint8_t*) &mem);
     return put_char((uint8_t const*) &mem, f);
   }
@@ -132,7 +132,7 @@ namespace utf8 {
   size_t get_char (uint8_t* ustr, FILE* f) {
     if (!fread(ustr, 1, 1, f)) return 0;
 
-    size_t size = char_size(ustr);
+    uint8_t size = char_size(ustr);
 
     if (size > 1) {
       if (!fread(ustr + 1, size - 1, 1, f)) {
@@ -145,8 +145,8 @@ namespace utf8 {
   }
 
   extern
-  int32_t get_char (FILE* f) {
-    int32_t mem = 0;
+  uint32_t get_char (FILE* f) {
+    uint32_t mem = 0;
     get_char((uint8_t*) &mem, f);
     return to_int((uint8_t*) &mem);
   }
@@ -198,13 +198,13 @@ namespace utf8 {
   }
 
   extern
-  int32_t char_at (uint8_t const* ustr, size_t index) {
+  uint32_t char_at (uint8_t const* ustr, size_t index) {
     return to_int(index_offset(ustr, index));
   }
 
 
   inline extern
-  bool is_whitespace (int32_t c) {
+  bool is_whitespace (uint32_t c) {
     return (c >= 0x0009 && c <= 0x000D)
         || c == 0x0020
         || c == 0x0085
@@ -231,8 +231,8 @@ namespace utf8 {
     size_t columns = 0;
 
     while (ustr[byte_offset] != '\0' && byte_offset < max_byte_length) {
-      int32_t uchar = to_int(ustr + byte_offset);
-      size_t byte_size = char_size(uchar);
+      uint32_t uchar = to_int(ustr + byte_offset);
+      uint8_t byte_size = char_size(uchar);
       columns += utf8proc_charwidth(uchar);
       byte_offset += byte_size;
     }
@@ -241,7 +241,7 @@ namespace utf8 {
   }
 
   extern
-  size_t column_count (int32_t c) {
+  size_t column_count (uint32_t c) {
     return utf8proc_charwidth(c);
   }
 
@@ -392,8 +392,8 @@ namespace utf8 {
     insert((uint8_t const*) str, length);
   }
 
-  void String::insert (int32_t c) {
-    size_t length = utf8::char_size(c);
+  void String::insert (uint32_t c) {
+    uint8_t length = utf8::char_size(c);
 
     grow_allocation(length);
 
@@ -437,10 +437,10 @@ namespace utf8 {
     insert_at(index, (uint8_t const*) str, length);
   }
 
-  void String::insert_at (size_t index, int32_t c) {
+  void String::insert_at (size_t index, uint32_t c) {
     if (index >= utf8::char_count(bytes)) return insert(c);
 
-    size_t length = utf8::char_size(c);
+    uint8_t length = utf8::char_size(c);
 
     grow_allocation(length);
 

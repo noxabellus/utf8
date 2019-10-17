@@ -27,19 +27,19 @@ namespace utf8 {
   extern uint32_t to_int (uint8_t const* c);
 
   /* Convert a utf32 grapheme to utf8 */
-  extern size_t encode (int32_t c, uint8_t* bytes);
+  extern size_t encode (uint32_t c, uint8_t* bytes);
 
   /* Add a utf8 grapheme to a file */
   extern size_t put_char (uint8_t const* ustr, FILE* f);
 
   /* Add a utf32 grapheme to a file as utf8 */
-  extern size_t put_char (int32_t c, FILE* f);
+  extern size_t put_char (uint32_t c, FILE* f);
 
   /* Get a utf8 grapheme from a file */
   extern size_t get_char (uint8_t* ustr, FILE* f);
 
   /* Get a utf8 grapheme from a file as utf32 */
-  extern int32_t get_char (FILE* f);
+  extern uint32_t get_char (FILE* f);
 
   /* Offset a pointer to a utf8 grapheme index */
   extern uint8_t* index_offset (uint8_t* ustr, size_t index);
@@ -59,10 +59,10 @@ namespace utf8 {
   }
 
   /* Extract a grapheme at an index in a utf8 ustr as utf32 */
-  extern int32_t char_at (uint8_t const* ustr, size_t index);
+  extern uint32_t char_at (uint8_t const* ustr, size_t index);
 
   /* Determine whether a specific grapheme is a whitespace character */
-  extern bool is_whitespace (int32_t c);
+  extern bool is_whitespace (uint32_t c);
 
   /* Determine whether a specific grapheme is a whitespace character */
   extern bool is_whitespace (uint8_t const* c);
@@ -71,13 +71,13 @@ namespace utf8 {
   extern size_t column_count (uint8_t const* ustr, size_t max_byte_length = SIZE_MAX);
 
   /* Get the number of visual columns associated with a utf32 grapheme */
-  extern size_t column_count (int32_t c);
+  extern size_t column_count (uint32_t c);
 
 
   /* Wrapper for index and value returned by StringIterator */
   struct StringIteratorResult {
     size_t i;
-    int32_t v;
+    uint32_t v;
   };
 
 
@@ -174,7 +174,7 @@ namespace utf8 {
     }
 
     /* Get the grapheme at an index in a String (Wrapper for char_at) */
-    int32_t operator [] (size_t index) const {
+    uint32_t operator [] (size_t index) const {
       return char_at(index);
     }
 
@@ -184,7 +184,7 @@ namespace utf8 {
     }
 
     /* Get the grapheme at an index in a String (Wrapper for utf8::char_at) */
-    int32_t char_at (size_t index) const {
+    uint32_t char_at (size_t index) const {
       return utf8::char_at(bytes, index);
     }
 
@@ -225,7 +225,7 @@ namespace utf8 {
     void insert (char const* str, size_t length = 0);
 
     /* Insert a single utf32 grapheme into a String */
-    void insert (int32_t c);
+    void insert (uint32_t c);
 
 
     /* Insert a ustr or subsection into a String at an existing grapheme index */
@@ -235,7 +235,7 @@ namespace utf8 {
     void insert_at (size_t index, char const* str, size_t length = 0);
 
     /* Insert a single utf32 grapheme into a String at an existing grapheme index */
-    void insert_at (size_t index, int32_t c);
+    void insert_at (size_t index, uint32_t c);
 
     /* Remove a subsection (defined in byte size) from a String */
     void remove (size_t index, size_t count = 1);
